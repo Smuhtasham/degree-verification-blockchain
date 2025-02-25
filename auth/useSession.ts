@@ -7,9 +7,9 @@ interface Session {
   userId: string;
 }
 
-const useSession = () => {
-  const cookieStore = cookies();
-  const sessionStatus = cookieStore.get("accessToken");
+const useSession = async() => {
+  const cookieStore = await cookies();
+  const sessionStatus = cookieStore.get("token");
   //
   if (sessionStatus) {
     try {

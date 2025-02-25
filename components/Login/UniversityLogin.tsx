@@ -3,20 +3,23 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { LoginTypes, UniversityLoginFunction } from "./request";
+import { useRouter } from "next/navigation";
+import { setSession } from "@/auth/setSession";
 
 
 const UniversityLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const router=useRouter()
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: UniversityLoginFunction,
     onSuccess: (res) => {
-      console.log(res)
-      alert("Login successful!");
+      setSession(res.data.token)
       setEmail("");
       setPassword("");
+      router.push("/university-dashboard")
     },
     onError: (error) => {
       alert(error.message);

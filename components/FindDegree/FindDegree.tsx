@@ -2,11 +2,14 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { GettingDegreeData, FormDataType } from "./request";
+import { UniverSityTypes } from "../AdminDashboard/request";
 
 const FindDegree = () => {
   const [rollNo, setRollNo] = useState("");
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [universityName, setUniversityName] = useState("");
+    const [selectedUniversity, setSelectedUniversity] =
+      useState<UniverSityTypes | null>(null);
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: GettingDegreeData,
@@ -20,6 +23,18 @@ const FindDegree = () => {
       alert("An error occurred while submitting the data.");
     },
   });
+  //  const handleUniversityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //     const selectedUniversity = universityData?.find(
+  //       (university) => university._id === e.target.value
+  //     );
+  //     setSelectedUniversity(selectedUniversity || null);
+  
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       universityName: selectedUniversity ? selectedUniversity.name : "",
+  //       universityCode: selectedUniversity ? selectedUniversity.code : "",
+  //     }));
+  //   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +98,25 @@ const FindDegree = () => {
           {isSuccess && (
             <p className="text-green-500">Data submitted successfully!</p>
           )}
+
+
+{/* <div className="mb-4">
+              <label>University:</label>
+              <select
+                name="universityName"
+                value={selectedUniversity?._id || ""}
+                onChange={handleUniversityChange}
+                className="w-full p-2 border rounded"
+                required
+              >
+                <option value="">Select University</option>
+                {universityData?.map((university) => (
+                  <option key={university._id} value={university._id}>
+                    {`${university.name} (${university.code})`}
+                  </option>
+                ))}
+              </select>
+            </div> */}
         </form>
       </div>
     </div>

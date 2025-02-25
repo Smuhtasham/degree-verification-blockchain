@@ -11,7 +11,7 @@ const AdminLogin = () => {
   const [UserName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const router=useRouter()
+  const router = useRouter();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: AdminLoginFunction,
@@ -21,7 +21,7 @@ const AdminLogin = () => {
       alert("Login successful!");
       setUserName("");
       setPassword("");
-      router.push("/admin-dashboard")
+      router.push("/admin-dashboard");
     },
     onError: (error) => {
       alert(error.message);
@@ -31,7 +31,7 @@ const AdminLogin = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData: LoginTypes = {
-      UserName,
+      username: UserName,
       password,
     };
     console.log(formData);

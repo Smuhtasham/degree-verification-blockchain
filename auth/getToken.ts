@@ -1,14 +1,11 @@
 "use server";
 import { cookies } from "next/headers";
 
-const getToken = () => {
-  const cookieStore = cookies();
-  const sessionStatus = cookieStore.get("token");
-  if (sessionStatus) {
-    return sessionStatus.value;
-  } else {
-    return "";
-  }
+const getToken = async () => {
+    const cookieStore = await cookies(); // Await the promise
+    const sessionStatus = cookieStore.get("token");
+    
+    return sessionStatus ? sessionStatus.value : "";
 };
 
 export default getToken;
