@@ -1,10 +1,9 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import UniversityLeftDashboard from "./UniversityLeftDashboard";
 import {
   CreateStudentDegree,
-  GettingAllUniversityData,
+  GettingSpecificUniversityData,
   StudentDataProps,
 } from "./request";
 import { LuLoader } from "react-icons/lu";
@@ -13,6 +12,7 @@ import { upload } from "thirdweb/storage";
 import { createThirdwebClient } from "thirdweb";
 import { MediaRenderer } from "thirdweb/react";
 import { data } from "framer-motion/client";
+import UniversityLeftDashboard from "./UniversityLeftDashboard";
 // import { UniverSityTypes } from "./request";
 
 const UniversityDashboard = () => {
@@ -36,8 +36,8 @@ const UniversityDashboard = () => {
     isError,
     error: universityError,
   } = useQuery({
-    queryKey: ["getting-all-universities-data"],
-    queryFn: GettingAllUniversityData,
+    queryKey: ["getting-specific-universities-data"],
+    queryFn: GettingSpecificUniversityData,
   });
 
   const handleChange = (

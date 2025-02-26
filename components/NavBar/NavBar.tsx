@@ -30,13 +30,17 @@ const NavBar: React.FC = () => {
   return (
     <div className="border border-solid">
       <div className="w-[85%] mx-auto flex justify-between items-center py-3">
-        <div className="text-[24px] font-bold cursor-pointer"
-        onClick={()=>router.push("/")}
-        >Find Your Degree</div>
+        <div
+          className="text-[24px] font-bold cursor-pointer"
+          onClick={() => router.push("/")}
+        >
+          Find Your Degree
+        </div>
         <div className="flex gap-3 items-center">
           <div>
-            <button className="bg-[#bc2b2b] py-1 px-2 text-white rounded-[10px] "
-            onClick={()=>router.push("/find-degree")}
+            <button
+              className="bg-[#bc2b2b] py-1 px-2 text-white rounded-[10px] "
+              onClick={() => router.push("/find-degree")}
             >
               Search You Degree
             </button>
@@ -59,13 +63,19 @@ const NavBar: React.FC = () => {
                 >
                   <button
                     className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    onClick={() => router.push("/admin-login")}
+                    onClick={() => {
+                      router.push("/admin-login");
+                      setIsDropdownOpen(false);
+                    }}
                   >
                     Login as Admin
                   </button>
                   <button
                     className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    onClick={() => router.push("/university-login")}
+                    onClick={() => {
+                      router.push("/university-login");
+                      setIsDropdownOpen(false);
+                    }}
                   >
                     Login as University
                   </button>

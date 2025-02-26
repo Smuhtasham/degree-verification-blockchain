@@ -22,10 +22,10 @@ export const CreateStudentDegree = async (data: StudentDataProps) => {
   return res.data;
 };
 
-export const GettingAllUniversityData = async () => {
+export const GettingSpecificUniversityData = async () => {
   const token = await getToken();
   const res = await instance.get<UniverSityTypes>(
-    "/getting-all-universities-data",
+    "/getting-specifc-universities-data",
     {
       headers: {
         Authorization: token,
