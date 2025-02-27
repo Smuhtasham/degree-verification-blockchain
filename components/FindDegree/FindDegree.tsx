@@ -3,13 +3,15 @@ import React, { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GettingDegreeData, FormDataType, GettingAllUniversityData } from "./request";
 import { UniverSityTypes } from "../AdminDashboard/request";
+import { MediaRenderer } from "thirdweb/react";
+import { createThirdwebClient } from "thirdweb";
 
 const FindDegree = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [cnic, setCnic] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState<UniverSityTypes | null>(null);
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess,data } = useMutation({
     mutationFn: GettingDegreeData,
     onSuccess: () => {
       alert("Data submitted successfully!");
@@ -21,6 +23,9 @@ const FindDegree = () => {
       alert("An error occurred while submitting the data.");
     },
   });
+  const client = createThirdwebClient({
+      clientId: "31f54069360e98a8069548df9aedcdfe",
+    });
 
   const {
     data: universityData,
@@ -51,6 +56,8 @@ const FindDegree = () => {
     };
     mutate(formData);
   };
+
+  console.log(data)
 
   return (
     <div className="flex justify-center items-center h-[calc(100vh-62px)] bg-black bg-opacity-30">
@@ -107,6 +114,10 @@ const FindDegree = () => {
           >
             {isPending ? "Submitting..." : "Submit"}
           </button>
+
+              {data&&<MediaRenderer src={data.data[3]} client={client}/>}
+
+
           {isError && (
             <p className="text-red-500">Submission failed. Please try again.</p>
           )}

@@ -14,3 +14,9 @@ export const createUniversityFunction = async (data: UniverSityTypes) => {
   const res= await instance.post("/add-university", data);
   return res.data
 };
+
+export const updateUniversityFunction=async(data:UniverSityTypes)=>{
+  const res =await instance.post("/updte-university",data)
+  return res.data
+
+}

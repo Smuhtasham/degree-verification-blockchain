@@ -1,17 +1,15 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import { LuLoader } from "react-icons/lu";
+import { createThirdwebClient } from "thirdweb";
+import { upload } from "thirdweb/storage";
 import {
   CreateStudentDegree,
   GettingSpecificUniversityData,
   StudentDataProps,
 } from "./request";
-import { LuLoader } from "react-icons/lu";
-import { UniverSityTypes } from "../AdminDashboard/request";
-import { upload } from "thirdweb/storage";
-import { createThirdwebClient } from "thirdweb";
-import { MediaRenderer } from "thirdweb/react";
-import { data } from "framer-motion/client";
+
 import UniversityLeftDashboard from "./UniversityLeftDashboard";
 // import { UniverSityTypes } from "./request";
 
@@ -93,18 +91,18 @@ const UniversityDashboard = () => {
   const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
     console.log({ file });
-  
+
     try {
       const uploadedFile = await upload({
         client,
         files: [file],
         uploadWithoutDirectory: true,
       });
-  
+
       console.log({ uploadedFile });
-  
+
       if (uploadedFile && uploadedFile[0]) {
         setFormData((prev) => ({
           ...prev,
@@ -117,7 +115,7 @@ const UniversityDashboard = () => {
       console.error("File upload error:", error);
     }
   };
-  
+
   useEffect(() => {
     if (universityData)
       setFormData((prev) => ({
