@@ -100,6 +100,8 @@
 //       </div>
 //       <button
 //         onClick={handleGeneratePdf}
+
+
 //         className="p-2 bg-blue-500 text-white rounded"
 //       >
 //         Generate PDF with QR Code
