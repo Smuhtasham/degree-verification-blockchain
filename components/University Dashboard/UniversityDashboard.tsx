@@ -1,17 +1,18 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { LuLoader } from "react-icons/lu";
 import { createThirdwebClient } from "thirdweb";
 import { upload } from "thirdweb/storage";
+import QRCode from "react-qr-code";
+import { PDFDocument, rgb } from "pdf-lib";
+import { Canvg, presets } from "canvg";
 import {
   CreateStudentDegree,
   GettingSpecificUniversityData,
   StudentDataProps,
 } from "./request";
-
 import UniversityLeftDashboard from "./UniversityLeftDashboard";
-// import { UniverSityTypes } from "./request";
 
 const UniversityDashboard = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -27,6 +28,7 @@ const UniversityDashboard = () => {
   });
 
   const [error, setError] = useState<string>("");
+  const qrCodeRef = useRef<SVGSVGElement>(null);
 
   const {
     data: universityData,
@@ -44,10 +46,8 @@ const UniversityDashboard = () => {
     const { name, value, type } = e.target;
 
     if (name === "cnic") {
-      // Allow only digits and dashes in the CNIC format
       const formattedValue = value.replace(/[^0-9-]/g, "");
 
-      // Ensure it follows the `xxxxx-xxxxxxx-x` format
       if (
         !/^\d{5}-\d{7}-\d{1}$/.test(formattedValue) &&
         formattedValue !== ""
@@ -71,6 +71,7 @@ const UniversityDashboard = () => {
   const client = createThirdwebClient({
     clientId: "31f54069360e98a8069548df9aedcdfe",
   });
+
   const mutation = useMutation({
     mutationFn: CreateStudentDegree,
     onSuccess: () => {
@@ -92,28 +93,76 @@ const UniversityDashboard = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log({ file });
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const pdfBytes = await new Uint8Array(
+        event.target?.result as ArrayBuffer
+      );
+      const pdfDoc = await PDFDocument.load(pdfBytes);
 
-    try {
-      const uploadedFile = await upload({
-        client,
-        files: [file],
-        uploadWithoutDirectory: true,
+      const pages = pdfDoc.getPages();
+      const firstPage = pages[0];
+
+      const { width, height } = firstPage.getSize();
+
+      const qrSize = 100; // Size of the QR code
+      const qrX = width - qrSize - 10; // Position the QR code 10px from the right
+      const qrY = 10; // Position the QR code 10px from the bottom
+
+      const qrCodeSVG = qrCodeRef.current;
+      if (!qrCodeSVG) return;
+
+      const svgData = new XMLSerializer().serializeToString(qrCodeSVG);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const v = await Canvg.from(ctx, svgData, presets.offscreen());
+      await v.render();
+
+      const qrImage = canvas.toDataURL("image/png");
+      const qrImageBytes = await fetch(qrImage).then((res) =>
+        res.arrayBuffer()
+      );
+      const qrImageEmbed = await pdfDoc.embedPng(qrImageBytes);
+
+      firstPage.drawImage(qrImageEmbed, {
+        x: qrX,
+        y: qrY,
+        width: qrSize,
+        height: qrSize,
       });
 
-      console.log({ uploadedFile });
+      const modifiedPdfBytes = await pdfDoc.save();
+      const modifiedPdfBlob = new Blob([modifiedPdfBytes], {
+        type: "application/pdf",
+      });
 
-      if (uploadedFile && uploadedFile[0]) {
-        setFormData((prev) => ({
-          ...prev,
-          degreeImageIPFS: uploadedFile, // Extract the correct URL or CID
-        }));
-      } else {
-        console.error("Upload failed or returned an empty response.");
+      try {
+        const uploadedFile = await upload({
+          client,
+          files: [
+            new File([modifiedPdfBlob], file.name, { type: "application/pdf" }),
+          ],
+          uploadWithoutDirectory: true,
+        });
+        console.log(uploadedFile);
+        if (uploadedFile && uploadedFile.length > 0) {
+          const ipfsUrl = uploadedFile; // Assuming the first item is the IPFS URL or CID
+          setFormData((prev) => ({
+            ...prev,
+            degreeImageIPFS: ipfsUrl,
+          }));
+          console.log("Uploaded IPFS URL:", ipfsUrl);
+        } else {
+          console.error("Upload failed or returned an empty response.");
+        }
+      } catch (error) {
+        console.error("File upload error:", error);
       }
-    } catch (error) {
-      console.error("File upload error:", error);
-    }
+    };
+
+    reader.readAsArrayBuffer(file);
   };
 
   useEffect(() => {
@@ -136,7 +185,6 @@ const UniversityDashboard = () => {
   if (isError) {
     return <div>Error: {universityError?.message}</div>;
   }
-  console.log(universityData);
 
   return (
     <div className="flex h-[calc(100vh-62px)]">
@@ -179,6 +227,7 @@ const UniversityDashboard = () => {
                 type="file"
                 name="degreeImageIPFS"
                 onChange={handleChangeFile}
+                accept="application/pdf"
                 className="w-full p-2 border rounded"
                 required
               />
@@ -207,6 +256,15 @@ const UniversityDashboard = () => {
             </button>
           </form>
         </div>
+      </div>
+      <div style={{ display: "none" }}>
+        <QRCode
+          ref={qrCodeRef}
+          value="https://viste-eta.vercel.app"
+          size={100}
+          bgColor="transparent"
+          fgColor="#000000"
+        />
       </div>
     </div>
   );

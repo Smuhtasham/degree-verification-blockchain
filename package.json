@@ -12,14 +12,17 @@
     "@tanstack/react-query": "^5.66.9",
     "@thirdweb-dev/react": "^4.9.4",
     "axios": "^1.7.9",
+    "canvg": "^4.0.2",
     "framer-motion": "^12.4.7",
     "jsonwebtoken": "^9.0.2",
     "next": "15.1.7",
     "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-qr-code": "^2.0.15",
     "thirdweb": "^5.89.0"
   },
   "devDependencies": {

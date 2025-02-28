@@ -117,6 +117,8 @@ const FindDegree = () => {
 
               {data&&<MediaRenderer src={data.data[3]} client={client}/>}
 
+              
+
 
           {isError && (
             <p className="text-red-500">Submission failed. Please try again.</p>
