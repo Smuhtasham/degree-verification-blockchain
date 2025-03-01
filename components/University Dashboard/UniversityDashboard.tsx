@@ -6,7 +6,6 @@ import { createThirdwebClient } from "thirdweb";
 import { upload } from "thirdweb/storage";
 import QRCode from "react-qr-code";
 import { PDFDocument, rgb } from "pdf-lib";
-import { Canvg, presets } from "canvg";
 import {
   CreateStudentDegree,
   GettingSpecificUniversityData,
@@ -15,9 +14,7 @@ import {
 import UniversityLeftDashboard from "./UniversityLeftDashboard";
 
 const UniversityDashboard = () => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(
-    "add-degree"
-  );
+  const [selectedOption, setSelectedOption] = useState<string | null>("add-degree");
   const [formData, setFormData] = useState<StudentDataProps>({
     registrationNumber: "",
     universityName: "",
@@ -48,10 +45,7 @@ const UniversityDashboard = () => {
     if (name === "cnic") {
       const formattedValue = value.replace(/[^0-9-]/g, "");
 
-      if (
-        !/^\d{5}-\d{7}-\d{1}$/.test(formattedValue) &&
-        formattedValue !== ""
-      ) {
+      if (!/^\d{5}-\d{7}-\d{1}$/.test(formattedValue) && formattedValue !== "") {
         setError("CNIC format must be xxxxx-xxxxxxx-x");
       } else {
         setError("");
@@ -63,8 +57,7 @@ const UniversityDashboard = () => {
 
     setFormData({
       ...formData,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     });
   };
 
@@ -95,9 +88,7 @@ const UniversityDashboard = () => {
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-      const pdfBytes = await new Uint8Array(
-        event.target?.result as ArrayBuffer
-      );
+      const pdfBytes = await new Uint8Array(event.target?.result as ArrayBuffer);
       const pdfDoc = await PDFDocument.load(pdfBytes);
 
       const pages = pdfDoc.getPages();
@@ -113,18 +104,8 @@ const UniversityDashboard = () => {
       if (!qrCodeSVG) return;
 
       const svgData = new XMLSerializer().serializeToString(qrCodeSVG);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      const v = await Canvg.from(ctx, svgData, presets.offscreen());
-      await v.render();
-
-      const qrImage = canvas.toDataURL("image/png");
-      const qrImageBytes = await fetch(qrImage).then((res) =>
-        res.arrayBuffer()
-      );
-      const qrImageEmbed = await pdfDoc.embedPng(qrImageBytes);
+      const qrImage = await fetch(`data:image/svg+xml;base64,${btoa(svgData)}`).then((res) => res.arrayBuffer());
+      const qrImageEmbed = await pdfDoc.embedPng(qrImage);
 
       firstPage.drawImage(qrImageEmbed, {
         x: qrX,
@@ -134,19 +115,15 @@ const UniversityDashboard = () => {
       });
 
       const modifiedPdfBytes = await pdfDoc.save();
-      const modifiedPdfBlob = new Blob([modifiedPdfBytes], {
-        type: "application/pdf",
-      });
+      const modifiedPdfBlob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
 
       try {
         const uploadedFile = await upload({
           client,
-          files: [
-            new File([modifiedPdfBlob], file.name, { type: "application/pdf" }),
-          ],
+          files: [new File([modifiedPdfBlob], file.name, { type: "application/pdf" })],
           uploadWithoutDirectory: true,
         });
-        console.log(uploadedFile);
+          console.log(uploadedFile)
         if (uploadedFile && uploadedFile.length > 0) {
           const ipfsUrl = uploadedFile; // Assuming the first item is the IPFS URL or CID
           setFormData((prev) => ({
@@ -257,7 +234,7 @@ const UniversityDashboard = () => {
           </form>
         </div>
       </div>
-      <div style={{ display: "none" }}>
+      <div style={{ display: 'none' }}>
         <QRCode
           ref={qrCodeRef}
           value="https://viste-eta.vercel.app"
