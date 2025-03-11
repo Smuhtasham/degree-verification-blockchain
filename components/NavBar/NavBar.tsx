@@ -9,7 +9,7 @@ const NavBar: React.FC = () => {
   const router = useRouter();
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
+    setIsDropdownOpen((prev) => !prev); 
   };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,18 +28,18 @@ const NavBar: React.FC = () => {
   }, []);
 
   return (
-    <div className="border border-solid">
-      <div className="w-[85%] mx-auto flex justify-between items-center py-3">
+    <div className=" bg-[#E8f6f3] ">
+      <div className="w-[85%] mx-auto flex  justify-between items-center py-3">
         <div
           className="text-[24px] font-bold cursor-pointer"
           onClick={() => router.push("/")}
         >
-          Find Your Degree
+          Degree Find Out
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-14 items-center ">
           <div>
             <button
-              className="bg-[#bc2b2b] py-1 px-2 text-white rounded-[10px] "
+              className="bg-transparent text-[#136e61] py-1 px-2  rounded-[10px] "
               onClick={() => router.push("/find-degree")}
             >
               Search You Degree
@@ -47,7 +47,7 @@ const NavBar: React.FC = () => {
           </div>
           <div className="relative" ref={dropdownRef}>
             <button
-              className="bg-blue-600 text-white rounded-[5px] text-[18px] py-1 px-2"
+              className="bg-[#136e61] text-white rounded-[8px] text-[18px] py-[6px] px-3"
               onClick={toggleDropdown}
             >
               Login

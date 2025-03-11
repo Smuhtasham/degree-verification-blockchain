@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <ThirdwebProvider>
           <QueryProvider>
-            <NavBar />
+           
             {children}
           </QueryProvider>
         </ThirdwebProvider>
