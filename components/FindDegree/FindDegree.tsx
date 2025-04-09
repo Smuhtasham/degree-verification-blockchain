@@ -60,11 +60,13 @@ const FindDegree = () => {
   console.log(data)
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-62px)] bg-black bg-opacity-30">
-      <div className="p-6 h-[50vh] w-[40%] border border-solid border-gray-300 rounded-[10px] bg-white">
+    <div className="flex justify-center items-center bg-[#043873] h-[100vh] overflow-hidden relative">
+      <img src="/Element.svg" className="absolute object-cover w-full h-[100vh] overflow-hidden z-1" alt="" />
+      <img src="/globe1.svg" className="absolute z-10 -bottom-14 right-0 w-[610px]"  alt="" />
+      <div className=" bg-[#ffffff5a] text-white backdrop-blur-sm pt-8 pb-4 px-12 rounded-xl w-[35%] z-50">
         <div>
-          <h1 className="text-center text-[28px] font-bold">
-            Find Your Degree Here
+          <h1 className="text-center flex gap-6 items-center text-[28px] font-bold">
+           <img src="/Logo Icon.svg" alt="" /> Find Your Degree Here
           </h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
@@ -74,7 +76,7 @@ const FindDegree = () => {
               type="text"
               value={registrationNumber}
               onChange={(e) => setRegistrationNumber(e.target.value)}
-              className="p-2 border border-gray-300 rounded-md"
+              className="p-2 placeholder:text-white text-white focus:outline-none bg-transparent border-b border-solid border-white"
               placeholder="Enter your registration number"
               required
             />
@@ -85,7 +87,7 @@ const FindDegree = () => {
               type="text"
               value={cnic}
               onChange={(e) => setCnic(e.target.value)}
-              className="p-2 border border-gray-300 rounded-md"
+              className="p-2 placeholder:text-white text-white focus:outline-none bg-transparent border-b border-solid border-white"
               placeholder="Enter your CNIC"
               required
             />
@@ -96,20 +98,26 @@ const FindDegree = () => {
               name="universityName"
               value={selectedUniversity?._id || ""}
               onChange={handleUniversityChange}
-              className="w-full p-2 border rounded"
+              className="p-2 placeholder:text-white text-white focus:outline-none bg-transparent border-b border-solid border-white"
               required
             >
               <option value="">Select University</option>
               {universityData?.map((university) => (
-                <option key={university._id} value={university._id}>
+                <option className="text-black" key={university._id} value={university._id}>
                   {`${university.name} (${university.code})`}
                 </option>
               ))}
             </select>
           </div>
+          {isError && (
+            <p className="text-red-500">Submission failed. Please try again.</p>
+          )}
+          {isSuccess && (
+            <p className="text-green-500">Data submitted successfully!</p>
+          )}
           <button
             type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="w-full p-2 bg-[#043873] font-semibold text-white rounded-md hover:bg-[#043873a1]"
             disabled={isPending}
           >
             {isPending ? "Submitting..." : "Submit"}
@@ -120,12 +128,7 @@ const FindDegree = () => {
               
 
 
-          {isError && (
-            <p className="text-red-500">Submission failed. Please try again.</p>
-          )}
-          {isSuccess && (
-            <p className="text-green-500">Data submitted successfully!</p>
-          )}
+          
         </form>
       </div>
     </div>

@@ -28,26 +28,21 @@ const NavBar: React.FC = () => {
   }, []);
 
   return (
-    <div className=" bg-[#E8f6f3] ">
-      <div className="w-[85%] mx-auto flex  justify-between items-center py-3">
+    <div className=" bg-[#043873] !z-50 shadow-xl">
+      <div className="w-[90%] mx-auto flex  justify-between items-center py-4">
         <div
-          className="text-[24px] font-bold cursor-pointer"
+          className=" cursor-pointer flex gap-4 items-center"
           onClick={() => router.push("/")}
         >
-          Degree Find Out
+          <img src="/Logo Icon.svg" className="" alt="" />
+         <span className="text-[24px] font-bold text-white"> Degree Find Out</span>
         </div>
-        <div className="flex gap-14 items-center ">
-          <div>
-            <button
-              className="bg-transparent text-[#136e61] py-1 px-2  rounded-[10px] "
-              onClick={() => router.push("/find-degree")}
-            >
-              Search You Degree
-            </button>
-          </div>
+
+        <div className="flex items-center">
+            
           <div className="relative" ref={dropdownRef}>
             <button
-              className="bg-[#136e61] text-white rounded-[8px] text-[18px] py-[6px] px-3"
+              className="bg-[#4F9CF9] relative hover:bg-[#347bd1] !z-50 text-white rounded-[10px] text-[18px] font-semibold py-2 px-3"
               onClick={toggleDropdown}
             >
               Login
@@ -62,7 +57,7 @@ const NavBar: React.FC = () => {
                   className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
                 >
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    className="w-full cursor-pointer text-left px-4 py-2 hover:bg-gray-100 rounded-[10px]"
                     onClick={() => {
                       router.push("/admin-login");
                       setIsDropdownOpen(false);
@@ -71,7 +66,7 @@ const NavBar: React.FC = () => {
                     Login as Admin
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                    className="w-full cursor-pointer text-left px-4 py-2 hover:bg-gray-100 rounded-[10px]"
                     onClick={() => {
                       router.push("/university-login");
                       setIsDropdownOpen(false);

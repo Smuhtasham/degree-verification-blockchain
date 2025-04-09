@@ -1,19 +1,18 @@
 "use server";
 import { cookies } from "next/headers";
 
-const removeSession = (): boolean => {
-    const cookieStore = cookies();
-    const sessionStatus = cookieStore.get("accessToken");
+const removeSession = async (): Promise<boolean> => {
+    const cookieStore = await cookies(); // Await the promise
+    const sessionStatus = cookieStore.get("token");
 
     if (sessionStatus) {
-        cookieStore.set("accessToken", "", { 
+        cookieStore.set("token", "", { 
             path: "/", 
             expires: new Date(0) // Set to past date to remove the cookie
         });
         return true; // Cookie successfully removed
-    } else {
-        return false; // No cookie found to delete
-    }
+    } 
+    return false; // No cookie found to delete
 };
 
-export default removeSession;7
+export default removeSession;

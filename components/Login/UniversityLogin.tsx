@@ -36,56 +36,62 @@ const UniversityLogin = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-62px)] bg-black bg-opacity-30">
-      <div className="p-6 h-[50vh] w-[40%] border border-solid border-gray-300 rounded-[10px] bg-white">
+    <div className="flex">
+<div className="w-[50%]"><img src="/abstract.jpg" className="w-full h-[100vh] object-cover" alt="" /></div>
+<div className="w-[50%] flex justify-center items-center h-[100vh] bg-[#043873]">
+      <div className="w-[40%] bg-[#ffffff5a] backdrop-blur-sm py-5 px-8 rounded-xl">
         <div>
-          <h1 className="text-center text-[28px] font-bold">University Login</h1>
+          <h1 className="flex items-center gap-2 text-center text-[28px] text-white font-semibold">
+            <img src="/Logo Icon.svg" alt="" />
+            University Login</h1>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           <div className="flex flex-col">
-            <label className="mb-1 font-semibold">Email:</label>
+            <label className=" text-white font-semibold">Email:</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="py-2    focus:outline-none border-b border-solid border-gray-300"
+              className="py-2 placeholder:text-white text-white focus:outline-none bg-transparent border-b border-solid border-white"
               placeholder="Enter your email"
               required
             />
           </div>
           <div className="flex flex-col relative">
-            <label className="mb-2 font-semibold">Password:</label>
+            <label className=" text-white font-semibold">Password:</label>
             <input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="py-2    focus:outline-none border-b border-solid border-gray-300"
+              className="py-2 placeholder:text-white text-white focus:outline-none bg-transparent border-b border-solid border-white"
               placeholder="Enter your password"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-[60%] -translate-y-[50%]   text-[20px]"
+              className="absolute text-white right-4 top-[62%] -translate-y-[50%]   text-[20px]"
             >
               {!showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
             </button>
           </div>
-          <button
-            type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            disabled={isPending}
-          >
-            {isPending ? "Logging in..." : "Login"}
-          </button>
           {isError && (
             <p className="text-red-500">Login failed. Please try again.</p>
           )}
           {isSuccess && (
             <p className="text-green-500">Login successful!</p>
           )}
+          <button
+            type="submit"
+            className="w-full mt-4 p-2 bg-[#043873] text-white rounded-md hover:bg-[#043873be]"
+            disabled={isPending}
+          >
+            {isPending ? "Logging in..." : "Login"}
+          </button>
+          
         </form>
       </div>
+    </div>
     </div>
   );
 };

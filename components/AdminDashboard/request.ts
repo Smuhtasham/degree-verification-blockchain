@@ -20,3 +20,9 @@ export const updateUniversityFunction=async(data:UniverSityTypes)=>{
   return res.data
 
 }
+
+export const deleteUniversityFunction=async(data:UniverSityTypes)=>{
+  const res =await instance.post("/delete-university",data)
+  return res.data
+
+}

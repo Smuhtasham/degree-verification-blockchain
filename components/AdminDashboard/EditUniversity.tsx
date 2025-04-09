@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { createUniversityFunction, UniverSityTypes, updateUniversityFunction } from "./request";
 import { GettingAllUniversityData } from "../FindDegree/request";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaUniversity } from "react-icons/fa";
 import { LuLoader } from "react-icons/lu";
 
 const EditUniversity = () => {
@@ -102,39 +102,41 @@ const EditUniversity = () => {
 
   return (
     <div>
-      <div className="text-[24px] font-bold">Edit University</div>
+      <div className="text-[24px] font-bold text-[#033773]">Edit University</div>
 
       {selectedUniversity ? (
-        <div className="border border-solid border-gray-300 rounded-[10px] w-[90%] p-5 h-[80%] mt-5">
-          <div className="pb-4">
+        <div className="border border-solid border-gray-300 rounded-[10px] w-full px-6 py-4 mt-4">
+          <div className="flex items-center justify-between pb-4">
             <FaArrowLeft
             className="cursor-pointer text-[20px]"
               onClick={() => {
                 setSelectedUniversity(null);
               }}
             />
+            <h2 className="text-[24px] font-semibold">Please Update the data</h2>
+            <div></div>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label>Email:</label>
+              <label className="text-[18px] font-medium">Email:</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
               />
             </div>
 
             <div className="mb-4">
-              <label>Name:</label>
+              <label className="text-[18px] font-medium">Name:</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
               />
             </div>
             {/* <div className="mb-4">
@@ -148,61 +150,64 @@ const EditUniversity = () => {
               />
             </div> */}
             <div className="mb-4">
-              <label>Number:</label>
+              <label className="text-[18px] font-medium">Number:</label>
               <input
                 type="number"
                 name="number"
                 value={formData.number}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
               />
             </div>
             <div className="mb-4">
-              <label>Password:</label>
+              <label className="text-[18px] font-medium">Password:</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
               />
             </div>
-            <div className="mb-4">
-              <label>Confirm Password:</label>
+            <div className="mb-2">
+              <label className="text-[18px] font-medium">Confirm Password:</label>
               <input
                 type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
               />
             </div>
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-500 pb-2">{error}</p>}
             <button
               type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
-            >
+              className="w-[200px] font-bold hover:bg-[#043873a1] bg-[#033773] text-white p-2 rounded-[10px]"
+              >
               Submit
             </button>
           </form>
         </div>
       ) : (
-        <div className="flex flex-col">
-          <label className="mb-1 font-semibold">University Name:</label>
-          <select
-            name="universityName"
-            value={selectedUniversity || ""}
-            onChange={handleUniversityChange}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="">Select University</option>
-            {universityData?.map((university) => (
-              <option key={university._id} value={university._id}>
-                {`${university.name} (${university.code})`}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col py-6 gap-2">
+          <label className="text-[18px] font-medium">University Name:</label>
+          <div className="relative w-full">
+      <select
+        name="universityName"
+        value={selectedUniversity || ""}
+        onChange={handleUniversityChange}
+        className="w-full py-2 px-4 pr-10 border border-[#0000007d] rounded-[10px] appearance-none"
+        required
+      >
+        <option value="">Select University</option>
+        {universityData?.map((university) => (
+          <option key={university._id} value={university._id}>
+            {`${university.name} (${university.code})`}
+          </option>
+        ))}
+      </select>
+      <FaUniversity className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500" />
+    </div>
         </div>
       )}
     </div>

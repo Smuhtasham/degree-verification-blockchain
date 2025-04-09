@@ -1,36 +1,49 @@
+"use client";
 import React from "react";
+
+import { useRouter } from "next/navigation";
+import { Globe } from "../UI/Globe";
 const HomeMain = () => {
+
+  const router = useRouter();
+
   return (
-    <section className="bg-[#E8f6f3] h-[calc(100vh-63px)] flex justify-center items-center">
-      <div className="w-[80%] mx-auto bg-[#093B3B] rounded-[8px] flex">
-        <div className="w-[50%] pb-20">
-          <div className="pt-12 text-white pl-8">
-            <p className="text-[28px]">Degree Find Out</p>
-            <p className="text-[45px] font-bold pt-5">
-              Knowledge Meets Innovation
+    <section className="bg-[#043873] h-[calc(100vh-75px)] relative">
+      <img
+        src="/Element.svg"
+        className="absolute top-[-80px] left-0 z-0"
+        alt=""
+      />
+      <div className="w-[80%] justify-center items-center mx-auto flex relative !z-20">
+        <div className="w-[50%] pt-32">
+          <div className=" text-white pb-8">
+            <p className="text-[45px] font-bold z-10">
+              Blockchain-Powered Degree Verification
             </p>
-            <p className="pt-8 text-[16px] font-normal">
-              This platform's simplicity belies its powerful capabilities,
-              offering a seamless and enjoyable educational experience.
+            <p className="pt-4 text-[20px] font-normal z-10">
+              Verify academic degrees with blockchain security—fast, reliable,
+              and fraud-proof. Say goodbye to fake credentials and lengthy
+              verification processes. Secure your trust in education with our
+              decentralized system.
             </p>
           </div>
-          <div className="ml-8 mt-12 py-2 px-4 rounded-[8px] flex gap-2 items-center bg-white w-[40%]">
-            
-            <input
-              type="text"
-              placeholder="Search Your Degree"
-              className="outline-none"
-            />
-          </div>
+
+          <button
+            className="cursor-pointer bg-[#4F9CF9] hover:bg-[#347bd1] z-10 text-white py-2 px-4 text-[18px] font-semibold rounded-[10px] "
+            onClick={() => router.push("/find-degree")}
+          >
+            Search Your Degree
+          </button>
         </div>
 
-        <div className="w-[50%] flex justify-center items-center relative">
-          <img src="students.png" className="h-[80%] relative z-10" />
-
-          <img
-            src="halfcircle.png"
-            className="absolute h-[346px] w-[501px] top-[286px]  right-[19px] z-[1] rotate-180"
-          />
+        <div className="w-[50%] flex justify-center items-center">
+          {/* <img
+            src="/globe1.svg"
+            className="absolute w-[45%] top-[-20px] right-0 z-0"
+          /> */}
+          <div className="absolute w-[45%] top-[0px] -right-[30px] z-0">
+          <Globe />
+          </div>
         </div>
       </div>
     </section>

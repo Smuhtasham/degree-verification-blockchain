@@ -14,7 +14,9 @@ import {
 import UniversityLeftDashboard from "./UniversityLeftDashboard";
 
 const UniversityDashboard = () => {
-  const [selectedOption, setSelectedOption] = useState<string | null>("add-degree");
+  const [selectedOption, setSelectedOption] = useState<string | null>(
+    "add-degree"
+  );
   const [formData, setFormData] = useState<StudentDataProps>({
     registrationNumber: "",
     universityName: "",
@@ -25,7 +27,8 @@ const UniversityDashboard = () => {
   });
 
   const [error, setError] = useState<string>("");
-  const qrCodeRef = useRef<SVGSVGElement>(null);
+
+  const qrCodeRef = useRef<HTMLDivElement>(null);
 
   const {
     data: universityData,
@@ -45,7 +48,10 @@ const UniversityDashboard = () => {
     if (name === "cnic") {
       const formattedValue = value.replace(/[^0-9-]/g, "");
 
-      if (!/^\d{5}-\d{7}-\d{1}$/.test(formattedValue) && formattedValue !== "") {
+      if (
+        !/^\d{5}-\d{7}-\d{1}$/.test(formattedValue) &&
+        formattedValue !== ""
+      ) {
         setError("CNIC format must be xxxxx-xxxxxxx-x");
       } else {
         setError("");
@@ -57,7 +63,8 @@ const UniversityDashboard = () => {
 
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     });
   };
 
@@ -83,12 +90,15 @@ const UniversityDashboard = () => {
   };
 
   const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("filechanged")
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-      const pdfBytes = await new Uint8Array(event.target?.result as ArrayBuffer);
+      const pdfBytes = await new Uint8Array(
+        event.target?.result as ArrayBuffer
+      );
       const pdfDoc = await PDFDocument.load(pdfBytes);
 
       const pages = pdfDoc.getPages();
@@ -103,40 +113,67 @@ const UniversityDashboard = () => {
       const qrCodeSVG = qrCodeRef.current;
       if (!qrCodeSVG) return;
 
-      const svgData = new XMLSerializer().serializeToString(qrCodeSVG);
-      const qrImage = await fetch(`data:image/svg+xml;base64,${btoa(svgData)}`).then((res) => res.arrayBuffer());
-      const qrImageEmbed = await pdfDoc.embedPng(qrImage);
+      const svgElement = qrCodeSVG.querySelector("svg");
+      if (!svgElement) return;
 
-      firstPage.drawImage(qrImageEmbed, {
-        x: qrX,
-        y: qrY,
-        width: qrSize,
-        height: qrSize,
-      });
+      // Create canvas to draw SVG as PNG
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-      const modifiedPdfBytes = await pdfDoc.save();
-      const modifiedPdfBlob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+      const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
+      const svgURL = URL.createObjectURL(svgBlob);
 
-      try {
-        const uploadedFile = await upload({
-          client,
-          files: [new File([modifiedPdfBlob], file.name, { type: "application/pdf" })],
-          uploadWithoutDirectory: true,
-        });
-          console.log(uploadedFile)
-        if (uploadedFile && uploadedFile.length > 0) {
-          const ipfsUrl = uploadedFile; // Assuming the first item is the IPFS URL or CID
-          setFormData((prev) => ({
-            ...prev,
-            degreeImageIPFS: ipfsUrl,
-          }));
-          console.log("Uploaded IPFS URL:", ipfsUrl);
-        } else {
-          console.error("Upload failed or returned an empty response.");
-        }
-      } catch (error) {
-        console.error("File upload error:", error);
-      }
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        // Convert the canvas to PNG and embed into PDF
+        canvas.toBlob(async (blob) => {
+          const qrImageBuffer = await blob?.arrayBuffer();
+          const qrImageEmbed = await pdfDoc.embedPng(qrImageBuffer!);
+
+          firstPage.drawImage(qrImageEmbed, {
+            x: qrX,
+            y: qrY,
+            width: qrSize,
+            height: qrSize,
+          });
+
+          const modifiedPdfBytes = await pdfDoc.save();
+          const modifiedPdfBlob = new Blob([modifiedPdfBytes], {
+            type: "application/pdf",
+          });
+
+          try {
+            const uploadedFile = await upload({
+              client,
+              files: [
+                new File([modifiedPdfBlob], file.name, { type: "application/pdf" }),
+              ],
+              uploadWithoutDirectory: true,
+            });
+            console.log(uploadedFile);
+            if (uploadedFile && uploadedFile.length > 0) {
+              const ipfsUrl = uploadedFile; // Assuming the first item is the IPFS URL or CID
+              setFormData((prev) => ({
+                ...prev,
+                degreeImageIPFS: ipfsUrl,
+              }));
+              console.log("Uploaded IPFS URL:", ipfsUrl);
+            } else {
+              console.error("Upload failed or returned an empty response.");
+            }
+          } catch (error) {
+            console.log("File upload error:", error);
+          }
+        }, "image/png");
+      };
+
+      img.src = svgURL;
     };
 
     reader.readAsArrayBuffer(file);
@@ -165,60 +202,67 @@ const UniversityDashboard = () => {
 
   return (
     <div className="flex h-[calc(100vh-62px)]">
-      <div className="w-[20%] border-r border-solid border-gray-200 h-full overflow-auto p-5">
+      <div className="w-[20%] border-r border-solid border-gray-200 h-[100vh] overflow-auto">
         <UniversityLeftDashboard
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
         />
       </div>
-      <div className="w-[80%] h-full overflow-auto p-5">
+      <div className="w-[80%] h-full overflow-auto p-8">
         <div className="text-[24px] font-bold">Add Student Degree</div>
-        <div className="border border-solid border-gray-300 rounded-[10px] w-[90%] p-5 h-[80%] mt-5">
+        <div className="border border-solid border-gray-300 rounded-[10px] w-full px-6 py-8 mt-5">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label>Registration Number:</label>
+              <label className="text-[18px] font-medium">
+                Registration Number:
+              </label>
               <input
                 type="text"
                 name="registrationNumber"
                 value={formData.registrationNumber}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
                 required
               />
             </div>
             <div className="mb-4">
-              <label>CNIC:</label>
+              <label className="text-[18px] font-medium">CNIC:</label>
               <input
                 type="text"
                 name="cnic"
                 value={formData.cnic}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
                 required
               />
             </div>
 
             <div className="mb-4">
-              <label>Degree Image IPFS:</label>
+              <label className="text-[18px] font-medium">
+                Degree Image IPFS:
+              </label>
               <input
                 type="file"
                 name="degreeImageIPFS"
                 onChange={handleChangeFile}
                 accept="application/pdf"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-[10px]"
                 required
               />
             </div>
 
             <div className="mb-4 flex items-center">
-              <label>Status:</label>
+              <label className="text-[18px] font-medium">Status:</label>
               <input
                 type="checkbox"
                 name="status"
                 checked={formData.status}
                 onChange={handleChange}
-                className="ml-2"
+                className="ml-2 mt-1"
               />
+              <span className="ml-2">
+                {formData.status ? "Active" : "Inactive"}
+              </span>
             </div>
 
             {error && <p className="text-red-500">{error}</p>}
@@ -226,7 +270,7 @@ const UniversityDashboard = () => {
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="bg-blue-500 text-white p-2 rounded flex gap-2 items-center justify-center"
+              className="w-[200px] flex gap-4 justify-center items-center font-bold hover:bg-[#043873a1] bg-[#033773] text-white p-2 rounded-[10px]"
             >
               {mutation.isPending && <LuLoader className="animate-spin" />}
               Submit
@@ -234,14 +278,15 @@ const UniversityDashboard = () => {
           </form>
         </div>
       </div>
-      <div style={{ display: 'none' }}>
-        <QRCode
-          ref={qrCodeRef}
-          value="https://viste-eta.vercel.app"
-          size={100}
-          bgColor="transparent"
-          fgColor="#000000"
-        />
+      <div style={{ display: "none" }}>
+        <div ref={qrCodeRef}>
+          <QRCode
+            value={"https://example.com/degree/"}
+            size={100}
+            bgColor="transparent"
+            fgColor="#000000"
+          />
+        </div>
       </div>
     </div>
   );
