@@ -306,7 +306,7 @@ const UniversityDashboard = () => {
       <div style={{ display: "none" }}>
         <div ref={qrCodeRef}>
           <QRCode
-            value={"https://example.com/degree/"}
+            value={`https://degree-verification-frontend.vercel.app/degree-verification/${formData.cnic}`}
             size={100}
             bgColor="transparent"
             fgColor="#000000"
