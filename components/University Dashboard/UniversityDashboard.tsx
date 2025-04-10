@@ -79,6 +79,14 @@ const UniversityDashboard = () => {
     mutationFn: CreateStudentDegree,
     onSuccess: () => {
       alert("Added successfully!");
+      setFormData({
+        registrationNumber: "",
+        universityName: "",
+        universityCode: "",
+        degreeImageIPFS: "",
+        status: false,
+        cnic: "",
+      });
     },
     onError: (error: any) => {
       alert(error.message);
