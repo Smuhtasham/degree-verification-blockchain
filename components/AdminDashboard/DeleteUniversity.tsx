@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { deleteUniversityFunction, UniverSityTypes } from "./request";  // Assuming there's a delete function
 import { GettingAllUniversityData } from "../FindDegree/request";
@@ -6,6 +6,7 @@ import { FaArrowLeft, FaUniversity } from "react-icons/fa";
 import { LuLoader } from "react-icons/lu";
 
 const DeleteUniversity = () => {
+  const queryClient = useQueryClient();  // Assuming you have a query client set up
   const [selectedUniversity, setSelectedUniversity] =
     useState<UniverSityTypes | null>(null);
 
@@ -21,9 +22,9 @@ const DeleteUniversity = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: deleteUniversityFunction,  // Assuming this function handles deletion
+    mutationFn: deleteUniversityFunction, 
     onSuccess: () => {
-        refetch();  // Refetch the university data after deletion
+      queryClient.invalidateQueries({ queryKey: ["getting-all-universities-data"] });
       alert("University deleted successfully!");
       setSelectedUniversity(null);
     },

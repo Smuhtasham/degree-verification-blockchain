@@ -17,6 +17,9 @@ const UniversityDashboard = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(
     "add-degree"
   );
+  // Add this near the other useState hooks
+  const [isUploading, setIsUploading] = useState(false);
+
   const [formData, setFormData] = useState<StudentDataProps>({
     registrationNumber: "",
     universityName: "",
@@ -85,14 +88,25 @@ const UniversityDashboard = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    console.log(formData);
+
+    if (isUploading) {
+      alert("Please wait until the file is uploaded.");
+      return;
+    }
+
+    if (!formData.degreeImageIPFS) {
+      alert("File upload failed or still in progress.");
+      return;
+    }
+
     mutation.mutate(formData);
   };
 
   const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("filechanged")
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setIsUploading(true); // Start upload
 
     const reader = new FileReader();
     reader.onload = async (event) => {
@@ -105,10 +119,9 @@ const UniversityDashboard = () => {
       const firstPage = pages[0];
 
       const { width, height } = firstPage.getSize();
-
-      const qrSize = 100; // Size of the QR code
-      const qrX = width - qrSize - 10; // Position the QR code 10px from the right
-      const qrY = 10; // Position the QR code 10px from the bottom
+      const qrSize = 100;
+      const qrX = width - qrSize - 10;
+      const qrY = 10;
 
       const qrCodeSVG = qrCodeRef.current;
       if (!qrCodeSVG) return;
@@ -116,7 +129,6 @@ const UniversityDashboard = () => {
       const svgElement = qrCodeSVG.querySelector("svg");
       if (!svgElement) return;
 
-      // Create canvas to draw SVG as PNG
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
@@ -131,7 +143,6 @@ const UniversityDashboard = () => {
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
 
-        // Convert the canvas to PNG and embed into PDF
         canvas.toBlob(async (blob) => {
           const qrImageBuffer = await blob?.arrayBuffer();
           const qrImageEmbed = await pdfDoc.embedPng(qrImageBuffer!);
@@ -152,13 +163,15 @@ const UniversityDashboard = () => {
             const uploadedFile = await upload({
               client,
               files: [
-                new File([modifiedPdfBlob], file.name, { type: "application/pdf" }),
+                new File([modifiedPdfBlob], file.name, {
+                  type: "application/pdf",
+                }),
               ],
               uploadWithoutDirectory: true,
             });
-            console.log(uploadedFile);
+
             if (uploadedFile && uploadedFile.length > 0) {
-              const ipfsUrl = uploadedFile; // Assuming the first item is the IPFS URL or CID
+              const ipfsUrl = uploadedFile;
               setFormData((prev) => ({
                 ...prev,
                 degreeImageIPFS: ipfsUrl,
@@ -169,6 +182,8 @@ const UniversityDashboard = () => {
             }
           } catch (error) {
             console.log("File upload error:", error);
+          } finally {
+            setIsUploading(false); // Upload done
           }
         }, "image/png");
       };
@@ -269,11 +284,13 @@ const UniversityDashboard = () => {
 
             <button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || isUploading}
               className="w-[200px] flex gap-4 justify-center items-center font-bold hover:bg-[#043873a1] bg-[#033773] text-white p-2 rounded-[10px]"
             >
-              {mutation.isPending && <LuLoader className="animate-spin" />}
-              Submit
+              {(mutation.isPending || isUploading) && (
+                <LuLoader className="animate-spin" />
+              )}
+              {isUploading ? "Uploading..." : "Submit"}
             </button>
           </form>
         </div>

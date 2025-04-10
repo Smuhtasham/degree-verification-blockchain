@@ -42,8 +42,9 @@ const AddUniversity = () => {
         confirmPassword: "",
       });
     },
-    onError: (error) => {
-      alert(error.message);
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "An error occurred";
+      alert(message);
     },
   });
 

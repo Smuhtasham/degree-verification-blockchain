@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { createUniversityFunction, UniverSityTypes, updateUniversityFunction } from "./request";
 import { GettingAllUniversityData } from "../FindDegree/request";
@@ -8,6 +8,8 @@ import { LuLoader } from "react-icons/lu";
 const EditUniversity = () => {
   const [selectedUniversity, setSelectedUniversity] =
     useState<UniverSityTypes | null>(null);
+
+    const queryClient = useQueryClient();
 
   const {
     data: universityData,
@@ -69,6 +71,7 @@ const EditUniversity = () => {
     mutationFn: updateUniversityFunction,
     onSuccess: () => {
       alert("Added successful!");
+      queryClient.invalidateQueries({ queryKey: ["getting-all-universities-data"] });
       setSelectedUniversity(null)
     },
     onError: (error: any) => {
