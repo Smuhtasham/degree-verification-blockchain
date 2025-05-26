@@ -1,5 +1,5 @@
 const isDev = process.env.NODE_ENV === "development";
 const config = {
-  baseURL: "http://localhost:5000" ,
+  baseURL: isDev? "http://localhost:5000":"https://degreebackend.xyz/" ,
 };
 export default config;
